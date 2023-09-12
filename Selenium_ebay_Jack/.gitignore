@@ -1,0 +1,5 @@
+#ignore all .txt and .csv files
+*.csv
+*.txt
+*.xlsx
+*.ipynb_checkpoints*
