@@ -1,0 +1,53 @@
+def merge_functions(text):
+    # Remove strings specified in the pattern from the text
+    #pattern = r'Physician|PCP|Assistants|Primary|Doctor|Care|-'
+    #text = re.sub(pattern, '', text, flags=re.IGNORECASE)
+
+    # Remove two words that come after "Agent" (case-insensitive match)
+    text = re.sub(r'\b[Aa]gent\b(?:\s+\w+){1,3}', 'agent', text, flags=re.IGNORECASE)
+
+    # Remove two words that come after "agent" (case-insensitive match)
+    text = re.sub(r'\bagent\b(?:\s+\w+){1,3}', 'agent', text, flags=re.IGNORECASE)
+
+    # Remove strings with the format "Agent, [Name]" or "agent, [Name]"
+    text = re.sub(r'\b[Aa]gent\s*,\s*[A-Za-z]+\s+[A-Za-z]+\b', '', text)
+
+    # Remove strings with the format "Agent, [Name]" or "agent, [Name]"
+    text = re.sub(r'\b[Rr]epresentative\s*,\s*[A-Za-z]+\s+[A-Za-z]+\b', '', text)
+
+    text = re.sub(r'\b[Rr]epresentative\s*\b[A-Za-z]+\s+[A-Za-z]+\b', '', text)
+    
+    text = re.sub(r'\bagent\b(\s+\w+){1,3}', '', text, flags=re.IGNORECASE)
+
+
+    #Dr. Alex Souze (PID#
+    # Remove strings with this format: "[Name] [Last Name] (PID", except when preceded by "Dr."
+    #text = re.sub(r'(?<!\bDr\.)\b[A-Za-z]+\s+[A-Za-z]+\s*\(PID[# ]\s*\d+\)', '', text)
+    pattern2 = r'Dr\.\s+[A-Za-z]+\s+[A-Za-z]+\s*\(PID'
+
+    #text = re.sub(pattern2, r'Dr. \g<0> hahaha', text)
+    text = re.sub(pattern2, r'Dr. \g<0> xxxx', text)
+
+    # Remove strings with this format: "[Name] [Last Name] (PID"
+    text = re.sub(r'\b[A-Za-z]+\s+[A-Za-z]+\s*\(PID[# ]\s*\d+\)', '', text)
+    
+    # Remove strings with this format: "[Name] [Last Name], NPN"
+    text = re.sub(r'\b[A-Za-z]+\s+[A-Za-z]+\s*,\s*\bNPN\b', '', text)
+
+    # Remove strings with this format: "[Name] [Last Name], [string] agent"
+    text = re.sub(r'\b[A-Za-z]+\s+[A-Za-z]+,\s+[A-Za-z]+\s+agent\b', '', text)
+
+    # Remove strings with this format:  mother , [string that can include dot] [Name] [Surname]
+    text = re.sub(r'\bmother\s*,\s*[A-Za-z.]+\s+[A-Za-z]+\s+[A-Za-z]+\b', '', text)
+    text = re.sub(r'\bmother\s*,\s*[A-Za-z]*\.?\s+[A-Za-z]+\s+[A-Za-z]+\b', '', text)
+
+    # Remove strings with this format:  daughter , [string that can include dot] [Name] [Surname]  daughter , Anu Joseph
+    text = re.sub(r'\bdaughter\s*,\s*[A-Za-z]*\.?\s+[A-Za-z]+\s+[A-Za-z]+\b', '', text)
+
+    # Clean stopwords from the text
+    stop_words = set(stopwords.words('english'))
+    words = word_tokenize(text)
+    filtered_words = [word for word in words if word.lower() not in stop_words]
+    text = ' '.join(filtered_words)
+
+    return text.strip()
